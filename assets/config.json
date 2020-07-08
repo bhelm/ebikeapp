@@ -1,0 +1,62 @@
+{
+  "version": 0.1,
+  "config": [
+    {
+      "type": "bool",
+      "label": "boolean option",
+      "key": "enable_walkmode",
+      "value": false
+    },
+    {
+      "type": "menu",
+      "label": "Some submenu",
+      "key": "some_submenu",
+      "children": [
+        {
+          "type": "text",
+          "label": "here you can type some informative text"
+        },
+        {
+          "type": "bool",
+          "label": "Enable Walkmode",
+          "key": "enable_walkmode",
+          "value": false
+        },
+        {
+          "type": "title",
+          "label": "powermode options"
+        },
+        {
+          "type": "enum",
+          "label": "Power Mode",
+          "key": "power_mode",
+          "value": "TORQUE",
+          "choices": {
+            "TORQUE": "by torque",
+            "POWER": "by Power",
+            "SLOPE": "by Slope"
+          },
+          "info": "Some description\nof the power modes\n\nRTFM!"
+        }
+      ]
+    },
+    {
+      "type": "number",
+      "label": "Maximum speed",
+      "key": "max_speed",
+      "value": 25,
+      "min": 0,
+      "max": 50,
+      "step": 1
+    },
+    {
+      "type": "number",
+      "label": "something with two decimal places",
+      "key": "some_decimal",
+      "value": 2.4,
+      "min": 0,
+      "max": 5,
+      "decimal": 2
+    }
+  ]
+}
