@@ -5,13 +5,21 @@ import 'dart:collection';
 import 'dart:async' show Future;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:numberpicker/numberpicker.dart';
+import 'package:provider/provider.dart';
+import 'bluetoothManager.dart';
+import 'connectionIndicator.dart';
 import "ebikeConfig.dart";
 import "bluetoothConfig.dart";
 
 void main() {
-  runApp(MaterialApp(
-    title: 'Navigation Basics',
-    home: HomeScreen(),
+  runApp(MultiProvider(
+    providers: [
+      ListenableProvider<BluetoothManager>(create: (_) => BluetoothManager()),
+    ],
+    child: MaterialApp(
+      title: 'Navigation Basics',
+      home: HomeScreen(),
+    ),
   ));
 }
 
@@ -20,7 +28,10 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home Screen'),
+        title: Row(children: [
+          ConnectionIndicator()
+
+        ]),
       ),
       body: Center(
         child: Text('Home Screen'),

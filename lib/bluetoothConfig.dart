@@ -3,17 +3,21 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<int> processServices(BluetoothDevice device) async {
+import 'bluetoothManager.dart';
+
+Future<int> processServices(BluetoothDevice device, BluetoothManager btman) async {
 
     await device.connect(autoConnect: true);
     List<BluetoothService> list = await device.discoverServices();
     for (var service in list) {
         print("Service!");
         if(service.uuid.toString() == '0000180f-0000-1000-8000-00805f9b34fb') {
-            print('found battery service');
-            for (var characteristic in service.characteristics) {
+            print('found battery service'); //we behave like we found a ebike now .. :)
+            btman.setEbike(device);
+            /*for (var characteristic in service.characteristics) {
                 if(characteristic.uuid.toString().toUpperCase().substring(4, 8) == '2A19') {
                     print('found battery characteristic');
                     await characteristic.setNotifyValue(true);
@@ -21,17 +25,11 @@ Future<int> processServices(BluetoothDevice device) async {
                         print(val);
                     }
                 }
-            }
+            }*/
         }
         print(service.uuid.toString());
     }
     return 0;
-}
-
-saveDevice(BluetoothDevice device) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    print('saving autoconnect device ' + device.id.toString());
-    await prefs.setString('autoConnect', device.id.toString());
 }
 
 class FindDevicesScreen extends StatelessWidget {
@@ -77,21 +75,27 @@ class FindDevicesScreen extends StatelessWidget {
                                             .toList(),
                                 ),
                             ),
+
+
                             StreamBuilder<List<ScanResult>>(
                                 stream: FlutterBlue.instance.scanResults,
                                 initialData: [],
-                                builder: (c, snapshot) => Column(
-                                    children: snapshot.data
-                                            .map(
-                                                (r) => ScanResultTile(
-                                            result: r,
-                                            onTap: () {
-                                                processServices(r.device);
-                                                // battery servicec 180F, characteristic 2A19
-                                            },
-                                        ),
-                                    )
-                                            .toList(),
+                                builder: (c, snapshot) => Consumer<BluetoothManager>(
+                                    builder: (context, btman, child) {
+                                        return Column(
+                                            children: snapshot.data
+                                                .map(
+                                                    (r) => ScanResultTile(
+                                                    result: r,
+                                                    onTap: () {
+                                                        processServices(r.device, btman);
+                                                        // battery servicec 180F, characteristic 2A19
+                                                    },
+                                                ),
+                                            )
+                                                .toList(),
+                                        );
+                                    },
                                 ),
                             ),
                         ],
